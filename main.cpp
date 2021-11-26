@@ -1,6 +1,7 @@
 #include "common.h"
 #include "instructions.h"
 #include "registers.h"
+#include "utils.h"
 using namespace std;
 
 string path = "Test.txt";
@@ -23,13 +24,6 @@ void ModifyReg(string &reg)
   auto found = Registers.find(reg);
   if (found != Registers.end())
     reg = found->second;
-}
-//utils
-bool isNumber(string line)
-{
-  char *p;
-  strtol(line.c_str(), &p, 10);
-  return *p == 0;
 }
 
 vector<Instruction> ReadFile(const string &fileName) //reads asm instructions
@@ -308,42 +302,7 @@ void Register_imm(string &instruction, string &rd, string &imm)
     //cout<<"rs1 "<<rs1<<endl;
   }
 }
-//utils
-int binary_to_dec(string input)
-{
-  int binary = stoi(input);
-  int decimal = 0;
-  int rem = 0;
 
-  for (int i = 0; binary > 0; i++)
-  {
-    rem = binary % 10;
-    decimal += rem * pow(2, i);
-    binary = binary / 10;
-  }
-
-  return decimal;
-}
-//utils
-string dec_to_binary(int number)
-{
-  int binary[8];
-  string temp = "";
-
-  for (int i = 0; i < 8; i++)
-    binary[i] = 0;
-
-  for (int i = 0; number > 0; i++)
-  {
-    binary[7 - i] = number % 2;
-    number = number / 2;
-  }
-
-  for (int i = 0; i < 8; i++)
-    temp += to_string(binary[i]);
-
-  return temp;
-}
 //utils
 int get_index(string reg)
 {
@@ -871,7 +830,7 @@ void sra(string &instruction)
   PC += 4;
 }
 
-void or_instruction(string &instruction)
+void struction(string &instruction)
 {
   string rd, rs1, rs2;
   Three_Registers(instruction, rd, rs1, rs2);

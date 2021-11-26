@@ -1,4 +1,8 @@
 #pragma once
+#ifndef INSTRUCTIONS_H
+#define INSTRUCTIONS_H
+
+#pragma once
 #include "common.h"
 using namespace std;
 
@@ -137,6 +141,7 @@ extern void srl(string &instruction);
 extern void sra(string &instruction);
 extern void or_instruction(string &instruction);
 extern void and_instruction(string &instruction);
+
 //M-extension
 extern void mul(string &instruction);
 extern void mulH(string &instruction);
@@ -146,3 +151,5 @@ extern void div(string &instruction);
 extern void divu(string &instruction);
 extern void rem(string &instruction);
 extern void remu(string &instruction);
+
+#endif //INSTRUCTIONS_H
