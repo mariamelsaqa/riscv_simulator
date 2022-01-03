@@ -13,5 +13,4 @@
 #include <stdint.h>
 #include <string>
 
-
-#endif //COMMON_H
+#endif // COMMON_H

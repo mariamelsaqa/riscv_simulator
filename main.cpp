@@ -1,7 +1,7 @@
-#include "common.h"
-#include "instructions.h"
-#include "registers.h"
-#include "utils.h"
+#include "common.hpp"
+#include "instructions.hpp"
+#include "utils.hpp"
+#include "registers.hpp"
 using namespace std;
 
 string path = "Test.txt";
@@ -26,14 +26,14 @@ void ModifyReg(string &reg)
     reg = found->second;
 }
 
-vector<Instruction> ReadFile(const string &fileName) //reads asm instructions
+vector<Instruction> ReadFile(const string &fileName) // reads asm instructions
 {
   vector<Instruction> instructions;
   ifstream file(fileName);
   if (!file.is_open())
   {
     cout
-        << "Open a good file" << endl; //haha...
+        << "Open a good file" << endl; // haha...
     exit(-1);
   }
   else
@@ -137,7 +137,7 @@ void ModifyInstructions(vector<vector<string>> labels, vector<Instruction> &inst
       string LabelFound;
       int FindFirstComma = instructions[i].input.find(",");
       int FindSecondComma;
-      //cout<<FindFirstComma<<endl;
+      // cout<<FindFirstComma<<endl;
       if (FindFirstComma > 0)
       {
         string sub = instructions[i].input.substr(FindFirstComma + 1, '\n');
@@ -161,7 +161,7 @@ void ModifyInstructions(vector<vector<string>> labels, vector<Instruction> &inst
       if (FindFirstComma > 0)
       {
         LabelFound = instructions[i].input.substr(FindFirstComma + 1, '\n');
-        //cout<<LabelFound<<endl;
+        // cout<<LabelFound<<endl;
       }
       for (int j = 0; j < labels.size(); j++)
       {
@@ -196,14 +196,14 @@ void Three_Registers(string &instruction, string &rd, string &rs1, string &rs2)
 
       instruction.replace(FindSpace + 1, FindFirstComma, rd);
     }
-    //cout<<rd<<endl;
+    // cout<<rd<<endl;
     string sub2 = sub1.substr(FindFirstComma + 1, '\n');
     int FindSecondComma = sub2.find(",");
     rs1 = sub1.substr(FindFirstComma + 1, FindSecondComma);
-    //cout<<"rs1 "<<rs1<<endl;
+    // cout<<"rs1 "<<rs1<<endl;
     if (rs1[0] != 'x')
     {
-      //cout<<"ay7aga??"<<endl;
+      // cout<<"ay7aga??"<<endl;
       ModifyReg(rs1);
       if (rd.size() == 2)
       {
@@ -211,17 +211,17 @@ void Three_Registers(string &instruction, string &rd, string &rs1, string &rs2)
       }
       else if (rd.size() > 2 && rs1.size() == 2)
       {
-        //cout<<"Here1 "<<instruction<<endl;
+        // cout<<"Here1 "<<instruction<<endl;
         instruction.replace(FindSpace + FindFirstComma + 4, FindSecondComma, rs1);
       }
       else if (rd.size() > 2 && rs1.size() > 2)
       {
-        //cout<<"Here "<<instruction<<"size: "<<instruction.size()<<endl;
+        // cout<<"Here "<<instruction<<"size: "<<instruction.size()<<endl;
         instruction.replace(FindSpace + FindFirstComma + 3, FindSecondComma, rs1);
       }
     }
     rs2 = sub2.substr(FindSecondComma + 1, '\n');
-    //cout<<"rs2 "<<rs2<<endl;
+    // cout<<"rs2 "<<rs2<<endl;
     if (isNumber(rs2) == false)
     {
       if (rs2[0] != 'x')
@@ -241,8 +241,8 @@ void Three_Registers(string &instruction, string &rd, string &rs1, string &rs2)
         }
       }
     }
-    //cout<<instruction<<endl;
-    //cout<<rs2<<endl;
+    // cout<<instruction<<endl;
+    // cout<<rs2<<endl;
   }
 }
 
@@ -259,12 +259,12 @@ void Two_Registers_OffSet(string &instruction, string &rd, string &rs1, int &Off
       ModifyReg(rd);
       instruction.replace(FindSpace + 1, FindFirstComma, rd);
     }
-    //cout<<rd<<endl;
+    // cout<<rd<<endl;
     string sub2 = sub1.substr(FindFirstComma + 1, '\n');
     int FindFirstBracket = sub2.find("(");
     string OffSet_string = sub1.substr(FindFirstComma + 1, FindFirstBracket);
     OffSet = stoi(OffSet_string);
-    //cout<<OffSet<<endl;
+    // cout<<OffSet<<endl;
     string sub3 = sub2.substr(FindFirstBracket + 1, '\n');
     int FindSecondBracket = sub3.find(")");
     rs1 = sub2.substr(FindFirstBracket + 1, FindSecondBracket);
@@ -280,7 +280,7 @@ void Two_Registers_OffSet(string &instruction, string &rd, string &rs1, int &Off
         instruction.replace(FindSpace + FindFirstComma + FindFirstBracket + 4, FindSecondBracket, rs1);
       }
     }
-    //cout<<rs1<<endl;
+    // cout<<rs1<<endl;
   }
 }
 
@@ -297,26 +297,20 @@ void Register_imm(string &instruction, string &rd, string &imm)
       ModifyReg(rd);
       instruction.replace(FindSpace + 1, FindFirstComma, rd);
     }
-    //cout<<"rd " <<rd<<endl;
+    // cout<<"rd " <<rd<<endl;
     imm = sub1.substr(FindFirstComma + 1, '\n');
-    //cout<<"rs1 "<<rs1<<endl;
+    // cout<<"rs1 "<<rs1<<endl;
   }
 }
 
-//utils
-int get_index(string reg)
-{
-  string temp = reg;
-  temp = temp.substr(1, temp.size());
-  return stoi(temp);
-}
+// utils
 
 void lui(string &instruction)
 {
   string rd, imm_s;
   Register_imm(instruction, rd, imm_s);
   int imm = stoi(imm_s);
-  int temp = imm * 4096; //shift 12 bits
+  int temp = imm * 4096; // shift 12 bits
   regFile[get_index(rd)] = regFile[get_index(rd)] + temp;
   PC += 4;
 }
@@ -326,7 +320,7 @@ void auipc(string &instruction)
   string rd, imm_s;
   Register_imm(instruction, rd, imm_s);
   int imm = stoi(imm_s);
-  regFile[get_index(rd)] = (imm * 4096) + PC; //shift 12 bits
+  regFile[get_index(rd)] = (imm * 4096) + PC; // shift 12 bits
   PC += 4;
 }
 
@@ -830,7 +824,7 @@ void sra(string &instruction)
   PC += 4;
 }
 
-void struction(string &instruction)
+void or_instruction(string &instruction)
 {
   string rd, rs1, rs2;
   Three_Registers(instruction, rd, rs1, rs2);
@@ -900,11 +894,11 @@ void div(string &instruction)
   Three_Registers(instruction, rd, rs1, rs2);
 
   if (regFile[get_index(rs2)] == 0)
-  { //dividing by zero
+  { // dividing by zero
     result = -1;
   }
   else if (regFile[get_index(rs1)] == 0x80000000 && regFile[get_index(rs2)] == -1)
-  {                      //overflow
+  {                      // overflow
     result = 0x80000000; //-2^XLEN-1
   }
   else
@@ -924,7 +918,7 @@ void divu(string &instruction)
   Three_Registers(instruction, rd, rs1, rs2);
 
   if (regFile[get_index(rs2)] == 0)
-  {                      //dividing by zero
+  {                      // dividing by zero
     result = 0xFFFFFFFF; //(2^XLen)-1
   }
   else
@@ -983,205 +977,196 @@ void remu(string &instruction)
 
 void DecideType(vector<Instruction> &instructions)
 {
-  if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "addi")
-  {
-    addi(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "lbu")
-  {
-    lbu(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "lhu")
-  {
-    lhu(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "sb")
-  {
-    sb(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "sh")
-  {
-    sh(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "sw")
-  {
-    sw(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "slti")
-  {
-    slti(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "sltiu")
-  {
-    sltiu(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "xori")
-  {
-    xori(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "ori")
-  {
-    ori(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "andi")
-  {
-    andi(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "slli")
-  {
-    slli(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "srli")
-  {
-    srli(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "srai")
-  {
-    srai(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "add")
-  {
-    add(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "sub")
-  {
-    sub(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "sll")
-  {
-    sll(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "slt")
-  {
-    slt(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "srai")
-  {
-    srai(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "sltu")
-  {
-    sltu(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "xor")
-  {
-    x_or(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "srl")
-  {
-    srl(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "sra")
-  {
-    sra(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "or")
-  {
-    or_instruction(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "and")
-  {
-    and_instruction(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "bge")
-  {
-    bge(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "blt")
-  {
-    blt(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "lw")
-  {
-    lw(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "lh")
-  {
-    lh(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "lb")
-  {
-    lb(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "bgeu")
-  {
-    bgeu(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "bltu")
-  {
-    bltu(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "bne")
-  {
-    bne(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "beq")
-  {
-    beq(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "jalr")
-  {
-    jalr(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "jal")
-  {
-    jal(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "auipc")
-  {
-    auipc(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "lui")
-  {
-    lui(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "fence")
+
+  std::string inst = GetInstruction(instructions, ((PC - starting_address) / 4));
+  std::string input = instructions[((PC - starting_address) / 4)].input;
+
+  if (inst == "addi")
+    addi(input);
+
+  if (inst == "lbu")
+
+    lbu(input);
+
+  if (inst == "lhu")
+
+    lhu(input);
+
+  if (inst == "sb")
+
+    sb(input);
+
+  if (inst == "sh")
+
+    sh(input);
+
+  if (inst == "sw")
+
+    sw(input);
+
+  if (inst == "slti")
+
+    slti(input);
+
+  if (inst == "sltiu")
+
+    sltiu(input);
+
+  if (inst == "xori")
+
+    xori(input);
+
+  if (inst == "ori")
+
+    ori(input);
+
+  if (inst == "andi")
+
+    andi(input);
+
+  if (inst == "slli")
+
+    slli(input);
+
+  if (inst == "srli")
+
+    srli(input);
+
+  if (inst == "srai")
+
+    srai(input);
+
+  if (inst == "add")
+
+    add(input);
+
+  if (inst == "sub")
+
+    sub(input);
+
+  if (inst == "sll")
+
+    sll(input);
+
+  if (inst == "slt")
+
+    slt(input);
+
+  if (inst == "srai")
+
+    srai(input);
+
+  if (inst == "sltu")
+
+    sltu(input);
+
+  if (inst == "xor")
+
+    x_or(input);
+
+  if (inst == "srl")
+    srl(input);
+
+  if (inst == "sra")
+    sra(input);
+
+  if (inst == "or")
+    or_instruction(input);
+
+  if (inst == "and")
+
+    and_instruction(input);
+
+  if (inst == "bge")
+
+    bge(input);
+
+  if (inst == "blt")
+
+    blt(input);
+
+  if (inst == "lw")
+
+    lw(input);
+
+  if (inst == "lh")
+
+    lh(input);
+
+  if (inst == "lb")
+
+    lb(input);
+
+  if (inst == "bgeu")
+
+    bgeu(input);
+
+  if (inst == "bltu")
+
+    bltu(input);
+
+  if (inst == "bne")
+
+    bne(input);
+
+  if (inst == "beq")
+
+    beq(input);
+
+  if (inst == "jalr")
+
+    jalr(input);
+
+  if (inst == "jal")
+
+    jal(input);
+
+  if (inst == "auipc")
+
+    auipc(input);
+
+  if (inst == "lui")
+
+    lui(input);
+
+  if (inst == "fence")
   {
     cout << "FENCE instruction stops the program" << endl;
     exit(EXIT_SUCCESS);
   }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "ecall")
+  if (inst == "ecall")
   {
     cout << "ECALL instruction stops the program" << endl;
     exit(EXIT_SUCCESS);
   }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "ebreak")
+  if (inst == "ebreak")
   {
     cout << "EBREAK instruction stops the program" << endl;
     exit(EXIT_SUCCESS);
   }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "mul")
-  {
-    mul(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "mulh")
-  {
-    mulH(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "mulhu")
-  {
-    mulHU(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "mulhsu")
-  {
-    mulHSU(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "div")
-  {
-    div(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "divu")
-  {
-    divu(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "rem")
-  {
-    rem(instructions[((PC - starting_address) / 4)].input);
-  }
-  else if (GetInstruction(instructions, ((PC - starting_address) / 4)) == "remu")
-  {
-    remu(instructions[((PC - starting_address) / 4)].input);
-  }
+  if (inst == "mul")
+    mul(input);
+
+  if (inst == "mulh")
+    mulH(input);
+
+  if (inst == "mulhu")
+    mulHU(input);
+
+  if (inst == "mulhsu")
+    mulHSU(input);
+
+  if (inst == "div")
+    div(input);
+
+  if (inst == "divu")
+    divu(input);
+
+  if (inst == "rem")
+    rem(input);
+
+  if (inst == "remu")
+    remu(input);
 }
 
 void callFunctions()
@@ -1207,7 +1192,7 @@ void callFunctions()
     MAX_PC = starting_address + (instructions.size() * 4) - 4;
   }
 
-  //cout<<"MAX_PC"<<MAX_PC<<endl;
+  // cout<<"MAX_PC"<<MAX_PC<<endl;
   while (PC <= MAX_PC)
   {
     cout << "PC: " << endl;
