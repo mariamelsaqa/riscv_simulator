@@ -2,8 +2,8 @@
 #include "ops.hpp"
 #include "defs.h"
 
-std::string path = "Test.txt";
-std::string path2 = "Data.txt";
+std::string path = "inst.txt";
+std::string path2 = "data.txt";
 
 std::array<int, 32> regFile;
 unsigned int PC = 0;
