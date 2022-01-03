@@ -1,4 +1,4 @@
-SRC= main.cpp parse.cpp utils.cpp globals.cpp instructions/*.cpp
+SRC= main.cpp parse.cpp utils.cpp globals.cpp logic.cpp instructions/*.cpp
 HEADERS= ops.hpp defs.h globals.hpp instruction.hpp
 GCC= g++
 RISCV_SIM= riscv_simulator

@@ -1,11 +1,12 @@
 #include "defs.h"
 #include "globals.hpp"
 #include "std++.hpp"
+#include "ops.hpp"
 using namespace std;
 void ModifyReg(string &reg)
 {
-    auto found = Registers.find(reg);
-    if (found != Registers.end())
+    auto found = regNames.find(reg);
+    if (found != regNames.end())
         reg = found->second;
 }
 
@@ -109,6 +110,16 @@ void ReadDataFile(const string &fileName)
     }
 }
 
+static bool isBranch(const std::string &instName)
+{
+
+    return instName == instNames[BGE_OP] ||
+           instName == instNames[BLT_OP] ||
+           instName == instNames[BNE_OP] ||
+           instName == instNames[BEQ_OP] ||
+           instName == instNames[BLTU_OP] ||
+           instName == instNames[BGEU_OP];
+}
 void ModifyInstructions(vector<vector<string>> labels, vector<Instruction> &instructions)
 {
     string Instruction;
@@ -119,12 +130,7 @@ void ModifyInstructions(vector<vector<string>> labels, vector<Instruction> &inst
     for (int i = 0; i < instructions.size(); i++)
     {
         Instruction = GetInstName(instructions, i);
-        if (Instruction == instructionsHeadings[17] ||
-            Instruction == instructionsHeadings[18] ||
-            Instruction == instructionsHeadings[19] ||
-            Instruction == instructionsHeadings[20] ||
-            Instruction == instructionsHeadings[21] ||
-            Instruction == instructionsHeadings[22])
+        if (isBranch(Instruction))
         {
             string LabelFound;
             int FindFirstComma = instructions[i].input.find(",");
@@ -143,7 +149,7 @@ void ModifyInstructions(vector<vector<string>> labels, vector<Instruction> &inst
             int FindSecondCommainALL = FindFirstComma + 2 + FindSecondComma;
             instructions[i].input.replace(FindSecondCommainALL, instructions[i].input.size() - FindSecondCommainALL, to_string(Difference));
         }
-        if (Instruction == instructionsHeadings[33])
+        if (Instruction == instNames[33])
         {
             string LabelFound;
             int FindFirstComma = instructions[i].input.find(",");
@@ -153,20 +159,17 @@ void ModifyInstructions(vector<vector<string>> labels, vector<Instruction> &inst
                 // cout<<LabelFound<<endl;
             }
             for (int j = 0; j < labels.size(); j++)
-            {
                 if (LabelFound == labels[j][0])
-                {
                     Difference = stoi(labels[j][1]) - numberofLines;
-                }
-            }
+
             instructions[i].input.replace(FindFirstComma + 1, instructions[i].input.size() - FindFirstComma + 1, to_string(Difference));
         }
         int FindLabel = instructions[i].input.find(":");
         instructions[i].input = instructions[i].input.substr(FindLabel + 1, instructions[i].input.size());
+
         if (instructions[i].input.size() < 2)
-        {
             instructions.erase(instructions.begin() + i);
-        }
+
         numberofLines += 4;
     }
 }
@@ -195,19 +198,13 @@ void Three_Registers(string &instruction, string &rd, string &rs1, string &rs2)
             // cout<<"ay7aga??"<<endl;
             ModifyReg(rs1);
             if (rd.size() == 2)
-            {
                 instruction.replace(FindSpace + FindFirstComma + 2, FindSecondComma, rs1);
-            }
             else if (rd.size() > 2 && rs1.size() == 2)
-            {
                 // cout<<"Here1 "<<instruction<<endl;
                 instruction.replace(FindSpace + FindFirstComma + 4, FindSecondComma, rs1);
-            }
             else if (rd.size() > 2 && rs1.size() > 2)
-            {
                 // cout<<"Here "<<instruction<<"size: "<<instruction.size()<<endl;
                 instruction.replace(FindSpace + FindFirstComma + 3, FindSecondComma, rs1);
-            }
         }
         rs2 = sub2.substr(FindSecondComma + 1, '\n');
         // cout<<"rs2 "<<rs2<<endl;
@@ -217,17 +214,11 @@ void Three_Registers(string &instruction, string &rd, string &rs1, string &rs2)
             {
                 ModifyReg(rs2);
                 if (rs1.size() == 2)
-                {
                     instruction.replace(FindSpace + FindFirstComma + FindSecondComma + 3, instruction.size() - FindSecondComma + 2, rs2);
-                }
                 else if (rs1.size() != 2 && rd.size() == 2)
-                {
                     instruction.replace(FindSpace + FindFirstComma + FindSecondComma + 4, instruction.size() - FindSecondComma + 2, rs2);
-                }
                 else
-                {
                     instruction.replace(FindSpace + FindFirstComma + FindSecondComma + 5, instruction.size() - FindSecondComma + 2, rs2);
-                }
             }
         }
         // cout<<instruction<<endl;
@@ -261,13 +252,9 @@ void Two_Registers_OffSet(string &instruction, string &rd, string &rs1, int &Off
         {
             ModifyReg(rs1);
             if (rd.size() == 2)
-            {
                 instruction.replace(FindSpace + FindFirstComma + FindFirstBracket + 3, FindSecondBracket, rs1);
-            }
             else
-            {
                 instruction.replace(FindSpace + FindFirstComma + FindFirstBracket + 4, FindSecondBracket, rs1);
-            }
         }
         // cout<<rs1<<endl;
     }

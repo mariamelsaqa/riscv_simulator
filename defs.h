@@ -90,5 +90,15 @@ extern bool isNumber(std::string line);
 extern int binary_to_dec(std::string input);
 extern std::string dec_to_binary(int number);
 extern int get_index(const std::string &reg);
+extern void throw_err(const std::string &err);
+extern std::string toupper(const std::string &str);
+extern std::string tolower(const std::string &str);
+extern void print_all_bases(int num, std::ostream &outs);
+extern void print_regfile(std::ostream &outs);
+extern void print_data_memory(std::ostream &outs);
+extern void print_inst_memory(std::ostream &outs);
 
+// logic.cpp
+extern void initialize();
+extern void simulate(std::ostream &outs);
 #endif

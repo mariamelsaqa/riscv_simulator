@@ -1,5 +1,5 @@
 
-#ifndef INSTRUCTIONS_HPP
+#ifndef INSTRUCTION_HPP
 #define INSTRUCTION_HPP
 #include "std++.hpp"
 struct Instruction
@@ -7,9 +7,6 @@ struct Instruction
     std::string input;
 };
 
-typedef void (*instFunc)(std::string &str);
-
-extern std::string instructionsHeadings[];
-extern const std::map<int, instFunc> instMap;
+typedef void (*instFunc_t)(std::string &str);
 
 #endif
